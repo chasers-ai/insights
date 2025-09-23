@@ -37,7 +37,7 @@ EXPOSE ${SUPERSET_PORT}
 
 # Define the command to run Superset
 CMD ["gunicorn", \
-    "--bind", "0.0.0.0:${SUPERSET_PORT}", \
+    "--bind", "0.0.0.0:${PORT}", \
     "--access-logfile", "-", \
     "--error-logfile", "-", \
     "--workers", "2", \
