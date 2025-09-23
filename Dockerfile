@@ -11,7 +11,7 @@ USER root
 # Copy your custom configuration and requirements
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-COPY superset_config.py /app/
+COPY superset_config.py /app/pythonpath/
 
 # Switch back to the non-privileged superset user
 USER superset
