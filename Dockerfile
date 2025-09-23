@@ -1,5 +1,5 @@
-# Use the official Superset image as a base
-FROM apache/superset:latest
+# Use a specific, stable version of the official Superset image
+FROM apache/superset:4.0.1
 
 # Switch to root
 USER root
