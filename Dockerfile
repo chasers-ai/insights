@@ -5,7 +5,7 @@ FROM python:3.9-slim-bullseye
 ENV SUPERSET_VERSION=4.0.1
 ENV FLASK_APP=superset
 ENV SUPERSET_HOME=/var/lib/superset
-ENV SUPERSET_PORT=8088
+ENV SUPERSET_PORT=${PORT}
 ENV SUPERSET_CONFIG_PATH=/etc/superset/superset_config.py
 
 # Create a non-privileged user
