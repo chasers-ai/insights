@@ -27,16 +27,14 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Build and push Docker image with Cloud Build
-        run: |-
-          gcloud builds submit . --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/superset-insights:latest
-        working-directory: ./superset
-
+        run: gcloud builds submit superset --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/superset-insights:latest
+        
       - name: Deploy to Cloud Run
         run: |-
           gcloud run deploy superset-insights \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/superset-insights:latest \
             --platform managed \
-            --region <us-central1> \
+            --region us-central1 \
             --allow-unauthenticated \
             --set-secrets=SUPERSET_DB_URI=superset-db-uri:latest,SUPERSET_SECRET_KEY=superset-secret-key:latest \
             --add-cloudsql-instances <cubik-analytics-platform:us-central1:superset-insights-db>
