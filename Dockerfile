@@ -5,7 +5,6 @@ FROM python:3.9-slim-bullseye
 ENV SUPERSET_VERSION=4.0.1
 ENV FLASK_APP=superset
 ENV SUPERSET_HOME=/var/lib/superset
-ENV SUPERSET_PORT=${PORT}
 ENV SUPERSET_CONFIG_PATH=/etc/superset/superset_config.py
 
 # Create a non-privileged user
@@ -32,18 +31,8 @@ RUN chown superset:superset ${SUPERSET_CONFIG_PATH}
 USER superset
 WORKDIR ${SUPERSET_HOME}
 
-# Expose the port
-EXPOSE ${SUPERSET_PORT}
+# Expose the port Cloud Run will assign
+EXPOSE 8080
 
-# Define the command to run Superset
-CMD ["gunicorn", \
-    "--bind", "0.0.0.0:${PORT}", \
-    "--access-logfile", "-", \
-    "--error-logfile", "-", \
-    "--workers", "2", \
-    "--worker-class", "gthread", \
-    "--threads", "20", \
-    "--timeout", "60", \
-    "--limit-request-line", "0", \
-    "--limit-request-field_size", "0", \
-    "superset.app:create_app()"]
+# Define the command to run Superset using the PORT variable provided by Cloud Run
+CMD exec gunicorn --bind "0.0.0.0:${PORT}" --workers 2 --worker-class gthread --threads 20 --timeout 60 "superset.app:create_app()"
