@@ -27,7 +27,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Build and push Docker image with Cloud Build
-        run: gcloud builds submit . --tag gcr.io/${{ secrets.GGCP_PROJECT_ID }}/superset-insights:latest
+        run: gcloud builds submit . --tag gcr.io/${{ secrets.GGCP_PROJECT_ID }}/superset-insights:latest --verbosity=debug
   
       - name: Deploy to Cloud Run
         run: |-
