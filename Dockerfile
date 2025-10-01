@@ -17,8 +17,9 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Superset and PostgreSQL driver
+# Install a compatible version of marshmallow FIRST, then Superset
 RUN pip install \
+    marshmallow==3.20.2 \
     apache-superset==${SUPERSET_VERSION} \
     psycopg2
 
