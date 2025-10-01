@@ -19,7 +19,6 @@ RUN apt-get update && apt-get install -y \
 
 # Install a compatible version of marshmallow FIRST, then Superset
 RUN pip install \
-    marshmallow==3.20.2 \
     apache-superset==${SUPERSET_VERSION} \
     psycopg2
 
