@@ -1,5 +1,5 @@
 # Start from a clean, official Python image
-FROM python:3.9-slim-bullseye
+FROM python:3.10-slim-bullseye
 
 # Set environment variables
 ENV SUPERSET_VERSION=5.0.0
