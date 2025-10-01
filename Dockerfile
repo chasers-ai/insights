@@ -2,7 +2,7 @@
 FROM python:3.9-slim-bullseye
 
 # Set environment variables
-ENV SUPERSET_VERSION=4.0.1
+ENV SUPERSET_VERSION=5.0.0
 ENV FLASK_APP=superset
 ENV SUPERSET_HOME=/var/lib/superset
 ENV SUPERSET_CONFIG_PATH=/etc/superset/superset_config.py
