@@ -52,10 +52,6 @@ RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/sta
 COPY ./assets/trailfinders-logo.jpeg /usr/local/lib/python3.10/site-packages/superset/static/assets/trailfinders-logo.jpeg
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/trailfinders-logo.jpeg
 
-COPY ./assets/chasers-logo.png /usr/local/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
-RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/chasers-logo.png
-
-
 
 # 5. Copy the custom favicon and set correct ownership
 COPY ./assets/chasers-flavicon.png /usr/local/lib/python3.10/site-packages/superset/static/assets/images/favicon.png
