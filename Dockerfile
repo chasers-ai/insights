@@ -34,7 +34,7 @@ COPY ./assets/loading.gif /usr/local/lib/python3.10/site-packages/superset/stati
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/loading.gif
 
 # 2. Copy the custom main logo and set correct ownership
-COPY ./assets/Chasers Logo-letters-Pink.png /usr/local/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
+COPY ./assets/chasers-logo.png /usr/local/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
 # ------------------------
 
