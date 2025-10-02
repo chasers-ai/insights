@@ -17,9 +17,8 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install a compatible version of marshmallow FIRST, then Superset
+# Install Superset and drivers
 RUN pip install \
-    marshmallow==3.21.1 \
     apache-superset==${SUPERSET_VERSION} \
     psycopg2 \
     pybigquery
@@ -29,10 +28,8 @@ RUN mkdir -p /etc/superset
 COPY superset_config.py ${SUPERSET_CONFIG_PATH}
 RUN chown superset:superset ${SUPERSET_CONFIG_PATH}
 
-# --- ADD THIS NEW BLOCK FOR BRANDING ---
 # Copy the custom loading GIF, overwriting the original
 COPY ./assets/loading.gif /usr/local/lib/python3.10/site-packages/superset/static/assets/images/loading.gif
-# -----------------------------------------
 
 # Switch to the non-privileged user
 USER superset
