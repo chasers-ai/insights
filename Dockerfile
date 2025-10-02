@@ -29,6 +29,11 @@ RUN mkdir -p /etc/superset
 COPY superset_config.py ${SUPERSET_CONFIG_PATH}
 RUN chown superset:superset ${SUPERSET_CONFIG_PATH}
 
+# --- ADD THIS NEW BLOCK FOR BRANDING ---
+# Copy the custom loading GIF, overwriting the original
+COPY ./assets/loading.gif /usr/local/lib/python3.10/site-packages/superset/static/assets/images/loading.gif
+# -----------------------------------------
+
 # Switch to the non-privileged user
 USER superset
 WORKDIR ${SUPERSET_HOME}
