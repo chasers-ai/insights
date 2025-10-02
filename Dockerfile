@@ -30,17 +30,20 @@ COPY superset_config.py ${SUPERSET_CONFIG_PATH}
 RUN chown superset:superset ${SUPERSET_CONFIG_PATH}
 
 # --- BRANDING CHANGES ---
-# 1. Copy the first custom loading GIF
+# 1. Copy the custom loading GIF and set correct ownership
 COPY ./assets/loading.gif /usr/local/lib/python3.10/site-packages/superset/static/assets/images/loading.gif
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/loading.gif
 
-# 2. Copy the custom main logo
+# 2. Copy the custom main logo and set correct ownership
 COPY ./assets/chasers-logo.png /usr/local/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
 
-# 3. Copy the second custom loading GIF
+# 3. Copy the second custom loading GIF and set correct ownership
 COPY ./assets/loading.gif /usr/local/lib/python3.10/site-packages/superset/static/assets/loading.cff8a5da.gif
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/loading.cff8a5da.gif
+
+# 4. Replace loading text in the JavaScript file
+RUN sed -i 's/"Waiting on %s"/"Loading..."/g' /usr/local/lib/python3.10/site-packages/superset/static/assets/b5a84132091404d9e284.chunk.js
 # ------------------------
 
 # Switch to the non-privileged user
