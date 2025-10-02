@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y \
 RUN pip install \
     marshmallow==3.21.1 \
     apache-superset==${SUPERSET_VERSION} \
-    psycopg2
+    psycopg2 \
+    pybigquery
 
 # Copy your custom configuration
 RUN mkdir -p /etc/superset
