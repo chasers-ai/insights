@@ -1,4 +1,4 @@
-# Start from a clean, official Python image
+# Start from an official Python 3.10 image
 FROM python:3.10-slim-bullseye
 
 # Set environment variables
@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install a compatible version of marshmallow FIRST, then Superset
-RUN pip install -v \
+RUN pip install \
+    marshmallow==3.21.1 \
     apache-superset==${SUPERSET_VERSION} \
     psycopg2
 
