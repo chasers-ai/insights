@@ -56,6 +56,9 @@ RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/sta
 # 5. Copy the custom favicon and set correct ownership
 COPY ./assets/chasers-flavicon.png /usr/local/lib/python3.10/site-packages/superset/static/assets/images/favicon.png
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/favicon.png
+
+# 6. Replace loading text in the JavaScript file
+RUN sed -i 's/"Waiting on %s"/"Loading..."/g' /usr/local/lib/python3.10/site-packages/superset/static/assets/b5a84132091404d9e284.chunk.js
 # ------------------------
 
 # Switch to the non-privileged user
