@@ -42,8 +42,17 @@ RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/sta
 COPY ./assets/loading.gif /usr/local/lib/python3.10/site-packages/superset/static/assets/loading.cff8a5da.gif
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/loading.cff8a5da.gif
 
-# 4. Replace loading text in the JavaScript file
-RUN sed -i 's/"Waiting on %s"/"Loading..."/g' /usr/local/lib/python3.10/site-packages/superset/static/assets/b5a84132091404d9e284.chunk.js
+# 4. Copy other custom images and set correct ownership
+COPY ./assets/kraken-logo.png /usr/local/lib/python3.10/site-packages/superset/static/assets/kraken-logo.png
+RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/kraken-logo.png
+COPY ./assets/mediacampaign-logo.png /usr/local/lib/python3.10/site-packages/superset/static/assets/mediacampaign-logo.png
+RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/mediacampaign-logo.png
+COPY ./assets/trailfinders-logo.jpeg /usr/local/lib/python3.10/site-packages/superset/static/assets/trailfinders-logo.jpeg
+RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/trailfinders-logo.jpeg
+
+# 5. Copy the custom favicon and set correct ownership
+COPY ./assets/chasers-favicon.png /usr/local/lib/python3.10/site-packages/superset/static/assets/images/favicon.png
+RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/favicon.png
 # ------------------------
 
 # Switch to the non-privileged user
