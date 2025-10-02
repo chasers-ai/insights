@@ -28,8 +28,15 @@ RUN mkdir -p /etc/superset
 COPY superset_config.py ${SUPERSET_CONFIG_PATH}
 RUN chown superset:superset ${SUPERSET_CONFIG_PATH}
 
-# Copy the custom loading GIF, overwriting the original
+# --- BRANDING CHANGES ---
+# 1. Copy the custom loading GIF and set correct ownership
 COPY ./assets/loading.gif /usr/local/lib/python3.10/site-packages/superset/static/assets/images/loading.gif
+RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/loading.gif
+
+# 2. Copy the custom main logo and set correct ownership
+COPY "./assets/Chasers Logo-letters-Pink.png" /usr/local/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
+RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
+# ------------------------
 
 # Switch to the non-privileged user
 USER superset
