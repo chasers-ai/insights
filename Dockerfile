@@ -1,5 +1,7 @@
-# Start from an official Python 3.10 image
-FROM python:3.10-slim-bullseye
+# =================================================================
+# STAGE 1: The "Builder" - where we install everything
+# =================================================================
+FROM python:3.10-slim-bullseye AS builder
 
 # Set environment variables
 ENV SUPERSET_VERSION=5.0.0
@@ -7,59 +9,62 @@ ENV FLASK_APP=superset
 ENV SUPERSET_HOME=/var/lib/superset
 ENV SUPERSET_CONFIG_PATH=/etc/superset/superset_config.py
 
-# Create a non-privileged user
-RUN groupadd --gid 1000 superset && \
-    useradd --uid 1000 --gid superset --home-dir ${SUPERSET_HOME} --create-home superset
-
-# Install system dependencies
+# Install system dependencies needed ONLY for building
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Superset and drivers
-RUN pip install \
+# Install Superset and drivers into a virtual environment
+# This makes it easy to copy to the next stage
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+RUN pip install --upgrade pip && pip install \
     marshmallow==3.21.1 \
     apache-superset==${SUPERSET_VERSION} \
     psycopg2 \
-    pybigquery
+    pybigquery \
+    gunicorn
 
-# Copy your custom configuration
+# =================================================================
+# STAGE 2: The "Final" Image - slim and secure
+# =================================================================
+FROM python:3.10-slim-bullseye
+
+# Set environment variables again for the final stage
+ENV SUPERSET_VERSION=5.0.0
+ENV FLASK_APP=superset
+ENV SUPERSET_HOME=/var/lib/superset
+ENV SUPERSET_CONFIG_PATH=/etc/superset/superset_config.py
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Create a non-privileged user (same as before)
+RUN groupadd --gid 1000 superset && \
+    useradd --uid 1000 --gid superset --home-dir ${SUPERSET_HOME} --create-home superset
+
+# Copy the installed Python packages from the "builder" stage
+COPY --from=builder /opt/venv /opt/venv
+
+# Copy your custom configuration (same as before)
 RUN mkdir -p /etc/superset
 COPY superset_config.py ${SUPERSET_CONFIG_PATH}
-RUN chown superset:superset ${SUPERSET_CONFIG_PATH}
 
-# --- BRANDING CHANGES ---
-# 1. Copy the custom loading GIF and set correct ownership
-COPY ./assets/loading.gif /usr/local/lib/python3.10/site-packages/superset/static/assets/images/loading.gif
-RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/loading.gif
+# --- EFFICIENT BRANDING CHANGES ---
+# 1. Copy all assets in a single, efficient layer
+COPY ./assets/loading.gif /opt/venv/lib/python3.10/site-packages/superset/static/assets/images/loading.gif
+COPY ./assets/chasers-logo.png /opt/venv/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
+COPY ./assets/loading.gif /opt/venv/lib/python3.10/site-packages/superset/static/assets/loading.cff8a5da.gif
+COPY ./assets/kraken-logo.png /opt/venv/lib/python3.10/site-packages/superset/static/assets/kraken-logo.png
+COPY ./assets/mediacampaign-logo.png /opt/venv/lib/python3.10/site-packages/superset/static/assets/mediacampaign-logo.png
+COPY ./assets/trailfinders-logo.jpeg /opt/venv/lib/python3.10/site-packages/superset/static/assets/trailfinders-logo.jpeg
+COPY ./assets/chasers-flavicon.png /opt/venv/lib/python3.10/site-packages/superset/static/assets/images/favicon.png
 
-# 2. Copy the custom main logo and set correct ownership
-COPY ./assets/chasers-logo.png /usr/local/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
-RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/superset-logo-horiz.png
+# 2. WARNING: This line is fragile and will break on Superset updates
+RUN sed -i 's/"Waiting on %s"/"Loading..."/g' /opt/venv/lib/python3.10/site-packages/superset/static/assets/b5a84132091404d9e284.chunk.js
 
-# 3. Copy the second custom loading GIF and set correct ownership
-COPY ./assets/loading.gif /usr/local/lib/python3.10/site-packages/superset/static/assets/loading.cff8a5da.gif
-RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/loading.cff8a5da.gif
-
-# 4. Copy other custom images and set correct ownership
-COPY ./assets/kraken-logo.png /usr/local/lib/python3.10/site-packages/superset/static/assets/kraken-logo.png
-RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/kraken-logo.png
-
-COPY ./assets/mediacampaign-logo.png /usr/local/lib/python3.10/site-packages/superset/static/assets/mediacampaign-logo.png
-RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/mediacampaign-logo.png
-
-COPY ./assets/trailfinders-logo.jpeg /usr/local/lib/python3.10/site-packages/superset/static/assets/trailfinders-logo.jpeg
-RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/trailfinders-logo.jpeg
-
-
-# 5. Copy the custom favicon and set correct ownership
-COPY ./assets/chasers-flavicon.png /usr/local/lib/python3.10/site-packages/superset/static/assets/images/favicon.png
-RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/favicon.png
-
-# 6. Replace loading text in the JavaScript file
-RUN sed -i 's/"Waiting on %s"/"Loading..."/g' /usr/local/lib/python3.10/site-packages/superset/static/assets/b5a84132091404d9e284.chunk.js
-# ------------------------
+# 3. Set ownership for all copied files and configs at once
+RUN chown -R superset:superset ${SUPERSET_CONFIG_PATH} ${SUPERSET_HOME} /opt/venv/lib/python3.10/site-packages/superset/static/assets
 
 # Switch to the non-privileged user
 USER superset
@@ -68,5 +73,5 @@ WORKDIR ${SUPERSET_HOME}
 # Expose the port Cloud Run will assign
 EXPOSE 8080
 
-# Define the command to run Superset using the PORT variable provided by Cloud Run
+# Define the command to run Superset
 CMD exec gunicorn --bind "0.0.0.0:${PORT}" --workers 2 --worker-class gthread --threads 20 --timeout 60 "superset.app:create_app()"
