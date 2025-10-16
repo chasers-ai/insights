@@ -51,6 +51,8 @@ COPY ./assets/mediacampaign-logo.png /usr/local/lib/python3.10/site-packages/sup
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/mediacampaign-logo.png
 COPY ./assets/trailfinders-logo.jpeg /usr/local/lib/python3.10/site-packages/superset/static/assets/trailfinders-logo.jpeg
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/trailfinders-logo.jpeg
+COPY ./assets/kraken-logo.png /usr/local/lib/python3.10/site-packages/superset/static/assets/gas-safe-registered.jpg
+RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/gas-safe-registered.jpg
 
 # 5. Copy the custom favicon and set correct ownership
 COPY ./assets/chasers-flavicon.png /usr/local/lib/python3.10/site-packages/superset/static/assets/images/favicon.png
