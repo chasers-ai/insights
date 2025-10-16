@@ -6,6 +6,7 @@ ENV SUPERSET_VERSION=5.0.0
 ENV FLASK_APP=superset
 ENV SUPERSET_HOME=/var/lib/superset
 ENV SUPERSET_CONFIG_PATH=/etc/superset/superset_config.py
+ENV PATH="${SUPERSET_HOME}/.local/bin:${PATH}"
 
 # Create a non-privileged user
 RUN groupadd --gid 1000 superset && \
