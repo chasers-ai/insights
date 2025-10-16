@@ -56,6 +56,10 @@ COPY ./assets/chasers-flavicon.png /usr/local/lib/python3.10/site-packages/super
 RUN chown superset:superset /usr/local/lib/python3.10/site-packages/superset/static/assets/images/favicon.png
 # ------------------------
 
+# Copy and set up the entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Switch to the non-privileged user
 USER superset
 WORKDIR ${SUPERSET_HOME}
@@ -64,4 +68,6 @@ WORKDIR ${SUPERSET_HOME}
 EXPOSE 8080
 
 # Define the command to run Superset using the PORT variable provided by Cloud Run
-CMD exec gunicorn --bind "0.0.0.0:${PORT}" --workers 2 --worker-class gthread --threads 20 --timeout 60 "superset.app:create_app()"
+# CMD exec gunicorn --bind "0.0.0.0:${PORT}" --workers 2 --worker-class gthread --threads 20 --timeout 60 "superset.app:create_app()"
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "--worker-class", "gthread", "--threads", "20", "--timeout", "60", "superset.app:create_app()"]
